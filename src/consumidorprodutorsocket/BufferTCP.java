@@ -32,8 +32,8 @@ class WorkerTCP implements Runnable {
                 System.out.println(this.novaConexao.getRemoteSocketAddress().toString() 
                     + " >> " + mensagemRecebida);
                 
-               String  mensagem = "recebido";
-               saida.writeUTF(mensagem);
+               String  mensagemEnviada = "recebido";
+               saida.writeUTF(mensagemEnviada);
                     
             } catch (Exception erro) {
                 System.out.println("ERRO: " + erro.getMessage());
