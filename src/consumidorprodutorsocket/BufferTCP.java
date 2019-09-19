@@ -31,6 +31,10 @@ class WorkerTCP implements Runnable {
                 String mensagemRecebida = entrada.readUTF();
                 System.out.println(this.novaConexao.getRemoteSocketAddress().toString() 
                     + " >> " + mensagemRecebida);
+                
+               String  mensagem = "recebido";
+               saida.writeUTF(mensagem);
+                    
             } catch (Exception erro) {
                 System.out.println("ERRO: " + erro.getMessage());
             }
@@ -41,10 +45,12 @@ class WorkerTCP implements Runnable {
 
 public class BufferTCP {
      public static void main(String[] args) throws Exception {
+        System.out.println("Iniciando Buffer!");
         ServerSocket server = new ServerSocket (7777);
         int novoId = 1;
         while (true) {
             Socket novaConexao = server.accept();
+            System.out.println("Nova conexão!");
             WorkerTCP novoWorker = new WorkerTCP(novoId, novaConexao);
             novoId++;
             Thread novaThread = new Thread(novoWorker);

@@ -5,6 +5,8 @@
  */
 package consumidorprodutorsocket;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.OutputStream;
 import static java.lang.Math.random;
 import java.net.Socket;
@@ -23,17 +25,22 @@ public class ProdutorTCP {
                 System.out.println("Conectando ao servidor...");
                 Socket conexaoServidor = new Socket("127.0.0.1", 7777);
                 System.out.println("Servidor conectado!");
-                OutputStream saida = conexaoServidor.getOutputStream();
-                String mensagem = "Eu sou o cliente " + id;
-                byte[] dadosEnviados = mensagem.getBytes();
-
+                DataOutputStream saida = new DataOutputStream(conexaoServidor.getOutputStream());
+                DataInputStream entrada = new DataInputStream(conexaoServidor.getInputStream());
+                String mensagem = "";
+                int item = 0;
                 while(true) {
                     int numero =  new java.util.Random().nextInt(5);
                     numero++;
                     Thread.sleep(1000*numero);
-                    saida.write(dadosEnviados);
+                    mensagem = ""+id+";0;item: "+item;
+                    saida.writeUTF(mensagem);
                     saida.flush();
                     System.out.println("Mensagem foi enviada com sucesso!");
+                    item++;
+                    
+                    String mensagemRecebida = entrada.readUTF();
+                    System.out.println(" >> " + mensagemRecebida);
                 }
              
          }catch(Exception e){
