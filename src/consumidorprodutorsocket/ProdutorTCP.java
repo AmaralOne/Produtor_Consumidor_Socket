@@ -34,13 +34,26 @@ public class ProdutorTCP {
                     numero++;
                     Thread.sleep(1000*numero);
                     mensagem = ""+id+";0;item: "+item;
-                    saida.writeUTF(mensagem);
-                    saida.flush();
-                    System.out.println("Mensagem foi enviada com sucesso!");
-                    item++;
-                    
-                    String mensagemRecebida = entrada.readUTF();
-                    System.out.println(" >> " + mensagemRecebida);
+                    boolean status = true;
+                    while(status){    
+                        saida.writeUTF(mensagem);
+                        saida.flush();
+                        System.out.println("Mensagem foi enviada com sucesso!");
+                        item++;
+
+                        String mensagemRecebida = entrada.readUTF();
+                        System.out.println(" >> " + mensagemRecebida);
+
+                        String[] textoSeparado = mensagemRecebida.split(";");
+
+                        String idBuffer = textoSeparado[0];
+                        String tipoOperacao = textoSeparado[1];
+                        String itemBuffer = textoSeparado[2];
+
+                        if(tipoOperacao.equals("1")){
+                            status = false;
+                        }
+                    }      
                 }
              
          }catch(Exception e){

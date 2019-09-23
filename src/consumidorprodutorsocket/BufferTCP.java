@@ -5,56 +5,76 @@
  */
 package consumidorprodutorsocket;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
 
-class WorkerTCP implements Runnable {
-    int id;
-    Socket novaConexao;
-    DataInputStream entrada;
-    DataOutputStream saida;
-    
-    public WorkerTCP(int id, Socket conexaoCliente) throws Exception {
-        this.id = id;
-        this.novaConexao = conexaoCliente;
-        this.entrada = new DataInputStream(novaConexao.getInputStream());
-        this.saida = new DataOutputStream(novaConexao.getOutputStream());
-    }
-    
-    @Override
-    public void run() {
-        
-        while (true) {
-            try {
-                String mensagemRecebida = entrada.readUTF();
-                System.out.println(this.novaConexao.getRemoteSocketAddress().toString() 
-                    + " >> " + mensagemRecebida);
-                
-               String  mensagemEnviada = "recebido";
-               saida.writeUTF(mensagemEnviada);
-                    
-            } catch (Exception erro) {
-                System.out.println("ERRO: " + erro.getMessage());
-            }
-        }
-    }
-}
 
 
 public class BufferTCP {
-     public static void main(String[] args) throws Exception {
-        System.out.println("Iniciando Buffer!");
-        ServerSocket server = new ServerSocket (7777);
-        int novoId = 1;
-        while (true) {
-            Socket novaConexao = server.accept();
-            System.out.println("Nova conexão!");
-            WorkerTCP novoWorker = new WorkerTCP(novoId, novaConexao);
-            novoId++;
-            Thread novaThread = new Thread(novoWorker);
-            novaThread.start();
+    private Item [] conteudo =  new Item[10];;
+    private int qtd = 0;
+    private boolean disponivel;
+ 
+    public synchronized boolean set(int idProdutor, String valor) {
+        if(disponivel == true && qtd > 9) {
+            return false;
         }
+        try {
+                
+            // wait();
+        } catch (Exception e) {
+                e.printStackTrace();
+        }
+        
+        conteudo[qtd] = new Item(valor);
+        
+        System.out.println("Produtor #" + idProdutor + " colocou " + conteudo[qtd].get());
+        qtd++;
+        disponivel = true;
+        notifyAll();
+        
+        return true;
     }
+    
+    public synchronized void painel(){
+        System.out.println("****************************");
+        System.out.println("Qtd de itens no buffer: "+qtd);
+        for(int i = 0; i<10; i++){
+            if((conteudo[i] == null)){
+                System.out.print(" 0");  
+            }else{
+                System.out.print(" "+conteudo[i].get());  
+            }
+         
+        }
+        System.out.println("");
+        System.out.println("****************************");
+    }
+ 
+    public synchronized Item get(int idConsumidor) {
+        if(disponivel == false) {
+            return null;
+        }
+        try {
+               
+            wait();
+        } catch (Exception e) {
+                e.printStackTrace();
+        }
+        
+        qtd--;
+        System.out.println("Consumidor #" + idConsumidor + " consumiu: "
+                + conteudo[qtd].get());
+        
+        
+        conteudo[qtd] = null;
+        
+        if(qtd == 0){
+            disponivel = false;
+        }
+        
+        
+        notifyAll();
+        return conteudo[qtd];
+    }
+
+    
 }
