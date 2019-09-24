@@ -76,6 +76,8 @@ class WorkerTCP implements Runnable {
         }
     }
 }
+
+
 public class ConsumidorProdutorSocket {
 
     /**
@@ -89,6 +91,10 @@ public class ConsumidorProdutorSocket {
         ServerSocket server = new ServerSocket (7777);
         int novoId = 1;
         BufferTCP bufferCompartilhado = new BufferTCP();
+        Painel painel = new Painel(bufferCompartilhado);
+        Thread paienlThread = new Thread(painel);
+        paienlThread.start();
+        
         while (true) {
             Socket novaConexao = server.accept();
             System.out.println("Nova conexão!");

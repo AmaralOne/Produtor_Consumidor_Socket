@@ -33,16 +33,17 @@ public class ProdutorTCP {
                     int numero =  new java.util.Random().nextInt(5);
                     numero++;
                     Thread.sleep(1000*numero);
-                    mensagem = ""+id+";0;item: "+item;
+                    mensagem = ""+id+";0;item"+id+": "+item;
                     boolean status = true;
+                    item++;
                     while(status){    
                         saida.writeUTF(mensagem);
                         saida.flush();
                         System.out.println("Mensagem foi enviada com sucesso!");
-                        item++;
+                        
 
                         String mensagemRecebida = entrada.readUTF();
-                        System.out.println(" >> " + mensagemRecebida);
+                        System.out.println("Mensagem Recebida >> " + mensagemRecebida);
 
                         String[] textoSeparado = mensagemRecebida.split(";");
 

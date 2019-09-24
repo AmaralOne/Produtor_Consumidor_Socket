@@ -18,8 +18,10 @@ public class BufferTCP {
             return false;
         }
         try {
-                
-            // wait();
+            if(qtd != 0){
+               //  wait();
+            }
+            
         } catch (Exception e) {
                 e.printStackTrace();
         }
@@ -54,8 +56,9 @@ public class BufferTCP {
             return null;
         }
         try {
-               
-            wait();
+             if(qtd != 0)  {
+                 //wait();
+             } 
         } catch (Exception e) {
                 e.printStackTrace();
         }
@@ -64,7 +67,7 @@ public class BufferTCP {
         System.out.println("Consumidor #" + idConsumidor + " consumiu: "
                 + conteudo[qtd].get());
         
-        
+        Item aux = conteudo[qtd];
         conteudo[qtd] = null;
         
         if(qtd == 0){
@@ -73,7 +76,7 @@ public class BufferTCP {
         
         
         notifyAll();
-        return conteudo[qtd];
+        return aux;
     }
 
     

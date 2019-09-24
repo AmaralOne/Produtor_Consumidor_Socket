@@ -23,19 +23,34 @@ public class ConsumidorTCP {
                 DataOutputStream saida = new DataOutputStream(conexaoServidor.getOutputStream());
                 DataInputStream entrada = new DataInputStream(conexaoServidor.getInputStream());
                 String mensagem = "";
-                int item = 0;
+
                 while(true) {
                     int numero =  new java.util.Random().nextInt(5);
                     numero++;
                     Thread.sleep(1000*numero);
-                    mensagem = ""+id+";0;item: "+item;
-                    saida.writeUTF(mensagem);
-                    saida.flush();
-                    System.out.println("Mensagem foi enviada com sucesso!");
-                    item++;
+                    boolean status = true;
+                    while(status){ 
+                        mensagem = ""+id+";3;item: null";
+                        saida.writeUTF(mensagem);
+                        saida.flush();
+                        System.out.println("Mensagem do Cosnumidor foi enviada com sucesso!");
+
                     
-                    String mensagemRecebida = entrada.readUTF();
-                    System.out.println(" >> " + mensagemRecebida);
+                        String mensagemRecebida = entrada.readUTF();
+                        System.out.println("Mensagem Recebida >> " + mensagemRecebida);
+                        
+                        String[] textoSeparado = mensagemRecebida.split(";");
+
+                        String idBuffer = textoSeparado[0];
+                        String tipoOperacao = textoSeparado[1];
+                        String itemBuffer = textoSeparado[2];
+                        
+                        if(tipoOperacao.equals("4")){
+                            status = false;
+                            System.out.println(" >> " + itemBuffer);
+                        }
+                    }
+                    
                 }
              
          }catch(Exception e){
